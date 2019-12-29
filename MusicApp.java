@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -35,12 +36,15 @@ class MusicApp implements ActionListener {
         root.setSize(dimensionx, dimensiony);
         root.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        JPanel wrapper = new JPanel();
+        wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
+
+        JScrollPane pane = new JScrollPane(wrapper);
+
         JPanel buttons_section = new JPanel();
+        
         buttons_section.setLayout(new GridLayout(5, 10));
         buttons_section.setBackground(new Color(200, 200, 200));
-
-        JScrollPane pane = new JScrollPane(buttons_section);
-        root.add(pane);
 
         createButtons(first_row_names);
         createButtons(second_row_names);
@@ -58,6 +62,29 @@ class MusicApp implements ActionListener {
             g -= 2;
         }
 
+        JPanel record_section = new JPanel(new GridLayout(1, 2));
+
+        JButton record = new JButton("Record");
+        JButton stop  = new JButton("Stop");
+
+        record.setBackground(Color.WHITE);
+        record.setForeground(Color.BLACK);
+        record.setFocusPainted(false);
+        record.addActionListener(this);
+
+        stop.setBackground(Color.WHITE);
+        stop.setForeground(Color.RED);
+        stop.setFocusPainted(false);
+        stop.addActionListener(this);
+
+        record_section.add(record);
+        record_section.add(stop);
+
+        wrapper.add(buttons_section);
+        wrapper.add(record_section);
+
+        root.add(pane);
+
         root.setVisible(true);
     }
 
@@ -68,9 +95,16 @@ class MusicApp implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e){
-        for(JButton button: btns){
-            if (e.getSource() == button){
-                System.out.println(button.getText());
+        if (e.getSource() == record) {
+            System.out.println("Record");
+        } else if (e.getSource() == stop){
+            System.out.println("Stop");
+        }
+        else{
+            for(JButton button: btns){
+                if (e.getSource() == button){
+                    System.out.println(button.getText());
+                }
             }
         }
     }
