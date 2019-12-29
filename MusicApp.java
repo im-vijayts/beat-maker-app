@@ -47,6 +47,7 @@ class MusicApp {
             button.setPreferredSize(new Dimension(90, 90));
             button.setBackground(new Color(r, g, b));
             button.setForeground(Color.WHITE);
+            button.setFocusPainted(false);
             container.add(button);
             r -= 2;
             g -= 2;
