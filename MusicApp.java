@@ -1,15 +1,17 @@
-import java.awt.Image;
-import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import java.util.ArrayList;
 
-class MusicApp {
+class MusicApp implements ActionListener {
 
     int dimensionx = 940;
     int dimensiony = 540;
@@ -29,14 +31,16 @@ class MusicApp {
     
     ArrayList<JButton> btns = new ArrayList<JButton>();
 
-    final Image img = Toolkit.getDefaultToolkit().getImage("E:\\rahul.jpg");
-
     MusicApp() {
         root.setSize(dimensionx, dimensiony);
         root.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JPanel container = new JPanel();
-        root.getContentPane().add(container);
+        JPanel buttons_section = new JPanel();
+        buttons_section.setLayout(new GridLayout(5, 10));
+        buttons_section.setBackground(new Color(200, 200, 200));
+
+        JScrollPane pane = new JScrollPane(buttons_section);
+        root.add(pane);
 
         createButtons(first_row_names);
         createButtons(second_row_names);
@@ -48,7 +52,8 @@ class MusicApp {
             button.setBackground(new Color(r, g, b));
             button.setForeground(Color.WHITE);
             button.setFocusPainted(false);
-            container.add(button);
+            button.addActionListener(this);
+            buttons_section.add(button);
             r -= 2;
             g -= 2;
         }
@@ -59,6 +64,14 @@ class MusicApp {
     public void createButtons(String[] row_names){
         for(String temp: row_names){
             btns.add(new JButton(temp));
+        }
+    }
+
+    public void actionPerformed(ActionEvent e){
+        for(JButton button: btns){
+            if (e.getSource() == button){
+                System.out.println(button.getText());
+            }
         }
     }
 
