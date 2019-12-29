@@ -31,6 +31,8 @@ class MusicApp implements ActionListener {
     JFrame root = new JFrame("Music Producer");
     
     ArrayList<JButton> btns = new ArrayList<JButton>();
+    final JButton record = new JButton("Record");
+    final JButton stop  = new JButton("Stop");
 
     MusicApp() {
         root.setSize(dimensionx, dimensiony);
@@ -64,9 +66,6 @@ class MusicApp implements ActionListener {
 
         JPanel record_section = new JPanel(new GridLayout(1, 2));
 
-        JButton record = new JButton("Record");
-        JButton stop  = new JButton("Stop");
-
         record.setBackground(Color.WHITE);
         record.setForeground(Color.BLACK);
         record.setFocusPainted(false);
@@ -97,7 +96,8 @@ class MusicApp implements ActionListener {
     public void actionPerformed(ActionEvent e){
         if (e.getSource() == record) {
             System.out.println("Record");
-        } else if (e.getSource() == stop){
+        } 
+        else if (e.getSource() == stop){
             System.out.println("Stop");
         }
         else{
