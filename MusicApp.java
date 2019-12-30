@@ -12,6 +12,16 @@ import javax.swing.JScrollPane;
 
 import java.util.ArrayList;
 
+// For playing the audio
+import java.io.File; 
+import java.io.IOException; 
+
+import javax.sound.sampled.AudioInputStream; 
+import javax.sound.sampled.AudioSystem; 
+import javax.sound.sampled.Clip; 
+import javax.sound.sampled.LineUnavailableException; 
+import javax.sound.sampled.UnsupportedAudioFileException; 
+
 class MusicApp implements ActionListener {
 
     int dimensionx = 940;
@@ -84,6 +94,16 @@ class MusicApp implements ActionListener {
 
         root.add(pane);
 
+        try {
+            new AudioPlayer("test.wav");
+        } catch (UnsupportedAudioFileException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (LineUnavailableException e) {
+            e.printStackTrace();
+        }
+
         root.setVisible(true);
     }
 
@@ -111,5 +131,44 @@ class MusicApp implements ActionListener {
 
     public static void main(String[] args) {
         new MusicApp();
+    }
+}
+
+class AudioPlayer {
+    Clip clip;
+    
+    AudioInputStream audioInputStream;
+    String file_path;
+
+    // constructor to initialize streams and clip 
+    public AudioPlayer(String f_path) throws UnsupportedAudioFileException, IOException, LineUnavailableException { 
+        file_path = f_path;
+        
+        // create AudioInputStream object 
+        audioInputStream = AudioSystem.getAudioInputStream(new File(file_path).getAbsoluteFile()); 
+        
+        // create clip reference 
+        clip = AudioSystem.getClip(); 
+        
+        // open audioInputStream to the clip 
+        clip.open(audioInputStream); 
+
+        try { 
+            this.play();
+        } 
+        catch (Exception ex) { 
+            System.out.println("Error with playing sound."); 
+            ex.printStackTrace();
+        }
+        finally {
+            clip.stop(); 
+            clip.close();
+        }
+    }
+
+    // Method to play the audio 
+    public void play() { 
+        //start the clip 
+        clip.start();    
     }
 }
