@@ -94,16 +94,6 @@ class MusicApp implements ActionListener {
 
         root.add(pane);
 
-        try {
-            new AudioPlayer("test.wav");
-        } catch (UnsupportedAudioFileException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (LineUnavailableException e) {
-            e.printStackTrace();
-        }
-
         root.setVisible(true);
     }
 
@@ -115,7 +105,12 @@ class MusicApp implements ActionListener {
 
     public void actionPerformed(ActionEvent e){
         if (e.getSource() == record) {
-            System.out.println("Record");
+            // System.out.println("Record");
+            try {
+                new AudioPlayer("test.wav");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         } 
         else if (e.getSource() == stop){
             System.out.println("Stop");
@@ -138,7 +133,9 @@ class AudioPlayer {
     Clip clip;
     
     AudioInputStream audioInputStream;
-    String file_path;
+    String file_path = "test.wav";
+
+    Boolean status;
 
     // constructor to initialize streams and clip 
     public AudioPlayer(String f_path) throws UnsupportedAudioFileException, IOException, LineUnavailableException { 
@@ -148,27 +145,36 @@ class AudioPlayer {
         audioInputStream = AudioSystem.getAudioInputStream(new File(file_path).getAbsoluteFile()); 
         
         // create clip reference 
-        clip = AudioSystem.getClip(); 
+        clip = AudioSystem.getClip();
         
-        // open audioInputStream to the clip 
-        clip.open(audioInputStream); 
+        // open audioInputStream to the clip
+        clip.open(audioInputStream);
 
         try { 
-            this.play();
-        } 
+            play();
+            System.out.println("Playing");
+            // while(status){}
+        }
         catch (Exception ex) { 
             System.out.println("Error with playing sound."); 
             ex.printStackTrace();
         }
         finally {
-            clip.stop(); 
-            clip.close();
+            stop();
+            status = false;
         }
     }
 
     // Method to play the audio 
-    public void play() { 
+    public void play() {
         //start the clip 
-        clip.start();    
+        clip.start();
+        status = true;
+    }
+
+    // Method to stop the audio
+    public void stop() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+        clip.stop();
+        clip.close(); 
     }
 }
