@@ -103,8 +103,6 @@ class MusicApp implements ActionListener {
 
         if (e.getSource() == record) {
             try {
-                // AudioPlayer foo = new AudioPlayer("test.wav");
-                // foo.start();
                 System.out.println("Record");
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -133,6 +131,7 @@ class MusicApp implements ActionListener {
     }
 }
 
+// When each sound is to be played a new thread is created to play the partivular sound
 class AudioPlayer extends Thread {
     Clip clip;
 
@@ -169,10 +168,14 @@ class AudioPlayer extends Thread {
     }
 
     public void run() {
-        try { 
+        try {
             play();
-            System.out.println("Playing");
-            while(status){}
+            // The below line of code is to check whether the sound is playing or not
+            // System.out.println("Playing");
+            while(status){
+                Thread.sleep(5_000);
+                status = false;
+            }
         }
         catch (Exception ex) { 
             System.out.println("Error with playing sound."); 
