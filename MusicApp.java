@@ -29,14 +29,10 @@ class MusicApp implements ActionListener {
 
     int r = 150, g = 100, b = 255;
 
-    final String first_row_names[] = { "CLAP", "SNAP", "RIM", "SNARE", "SNARE 2", "KICK", "KICK 2", "808 1", "808 2",
-            "808 3", "808 4", "808 5" };
-    final String second_row_names[] = { "HAT", "HAT", "CLAVES", "TRIANGLE", "SHAKER", "CRASH", "GUN", "CONGA",
-            "CONGA 2", "STICK", "TOM", "TOM 2" };
-    final String third_row_names[] = { "KEYS 1", "KEYS 2", "KEYS 3", "KEYS 4", "KEYS 5", "KEYS 6", "GUITAR 1",
-            "GUITAR 2", "GUITAR 3", "GUITAR 4", "GUITAR 5" };
-    final String fourth_row_names[] = { "JYEA", "UGH", "HEY", "YEAUH", "UGH", "AWEYEAH", "HA", "HOLDUP", "HUH",
-            "KHALED" };
+    final String first_row_names[] = { "CLAP", "SNAP", "SNARE", "SNARE2", "KICK", "KICK2", "8082", "8083", "8084", "8085", "8086" };
+    final String second_row_names[] = { "HAT", "HAT", "CLAVES", "TRIANGLE", "SHAKER", "CONGA", "TOM", "TOM2" };
+    final String third_row_names[] = { "KEYS3", "KEYS4", "KEYS5","GUITAR1", "GUITAR2", "GUITAR3", "GUITAR4" };
+    final String fourth_row_names[] = { "JYEA", "UGH", "HEY", "YEAUH", "UGH", "HA", "HOLDUP" };
 
     JFrame root = new JFrame("Music Producer");
     
@@ -104,10 +100,12 @@ class MusicApp implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e){
+
         if (e.getSource() == record) {
-            // System.out.println("Record");
             try {
-                new AudioPlayer("test.wav");
+                // AudioPlayer foo = new AudioPlayer("test.wav");
+                // foo.start();
+                System.out.println("Record");
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -118,7 +116,13 @@ class MusicApp implements ActionListener {
         else{
             for(JButton button: btns){
                 if (e.getSource() == button){
-                    System.out.println(button.getText());
+                    try {
+                        String arg = "./sounds/" + button.getText().toLowerCase() + ".wav";
+                        AudioPlayer player = new AudioPlayer(arg);
+                        player.start();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                 }
             }
         }
@@ -129,11 +133,11 @@ class MusicApp implements ActionListener {
     }
 }
 
-class AudioPlayer {
+class AudioPlayer extends Thread {
     Clip clip;
-    
+
     AudioInputStream audioInputStream;
-    String file_path = "test.wav";
+    String file_path;
 
     Boolean status;
 
@@ -143,26 +147,12 @@ class AudioPlayer {
         
         // create AudioInputStream object 
         audioInputStream = AudioSystem.getAudioInputStream(new File(file_path).getAbsoluteFile()); 
-        
+
         // create clip reference 
         clip = AudioSystem.getClip();
         
         // open audioInputStream to the clip
         clip.open(audioInputStream);
-
-        try { 
-            play();
-            System.out.println("Playing");
-            // while(status){}
-        }
-        catch (Exception ex) { 
-            System.out.println("Error with playing sound."); 
-            ex.printStackTrace();
-        }
-        finally {
-            stop();
-            status = false;
-        }
     }
 
     // Method to play the audio 
@@ -173,8 +163,28 @@ class AudioPlayer {
     }
 
     // Method to stop the audio
-    public void stop() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+    public void stopAudio() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
         clip.stop();
         clip.close(); 
+    }
+
+    public void run() {
+        try { 
+            play();
+            System.out.println("Playing");
+            while(status){}
+        }
+        catch (Exception ex) { 
+            System.out.println("Error with playing sound."); 
+            ex.printStackTrace();
+        }
+        finally {
+            try {
+                stopAudio();
+            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                e.printStackTrace();
+            }
+            status = false;
+        }
     }
 }
