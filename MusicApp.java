@@ -11,12 +11,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import java.util.ArrayList;
-
+import java.io.ByteArrayInputStream;
 // For playing the audio
-import java.io.File; 
-import java.io.IOException; 
+import java.io.File;
+import java.io.IOException;
 
-import javax.sound.sampled.AudioInputStream; 
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem; 
 import javax.sound.sampled.Clip; 
 import javax.sound.sampled.LineUnavailableException; 
@@ -34,11 +36,13 @@ class MusicApp implements ActionListener {
     final String third_row_names[] = { "KEYS3", "KEYS4", "KEYS5","GUITAR1", "GUITAR2", "GUITAR3", "GUITAR4" };
     final String fourth_row_names[] = { "JYEA", "UGH", "HEY", "YEAUH", "UGH", "HA", "HOLDUP" };
 
-    JFrame root = new JFrame("Music Producer");
+    JFrame root = new JFrame("Music Producer"); 
     
     ArrayList<JButton> btns = new ArrayList<JButton>();
     final JButton record = new JButton("Record");
     final JButton stop  = new JButton("Stop");
+    
+    Boolean recording = false;
 
     MusicApp() {
         root.setSize(dimensionx, dimensiony);
@@ -102,21 +106,27 @@ class MusicApp implements ActionListener {
     public void actionPerformed(ActionEvent e){
 
         if (e.getSource() == record) {
-            try {
+            if (!recording){
+                recording = true;
                 System.out.println("Record");
-            } catch (Exception ex) {
-                ex.printStackTrace();
+                record.setEnabled(false);
+                stop.setEnabled(true);
             }
         } 
         else if (e.getSource() == stop){
-            System.out.println("Stop");
+            if (recording){
+                recording = false;
+                System.out.println("Stop");
+                stop.setEnabled(false);
+                record.setEnabled(true);
+            }
         }
         else{
             for(JButton button: btns){
                 if (e.getSource() == button){
                     try {
-                        String arg = "./sounds/" + button.getText().toLowerCase() + ".wav";
-                        AudioPlayer player = new AudioPlayer(arg);
+                        String sound_path = "./sounds/" + button.getText().toLowerCase() + ".wav";
+                        AudioPlayer player = new AudioPlayer(sound_path, recording);
                         player.start();
                     } catch (Exception ex) {
                         ex.printStackTrace();
@@ -140,14 +150,20 @@ class AudioPlayer extends Thread {
 
     Boolean status;
 
-    // constructor to initialize streams and clip 
-    public AudioPlayer(String f_path) throws UnsupportedAudioFileException, IOException, LineUnavailableException { 
-        file_path = f_path;
-        
-        // create AudioInputStream object 
-        audioInputStream = AudioSystem.getAudioInputStream(new File(file_path).getAbsoluteFile()); 
+    Boolean recording;
+    
+    // writing to files
+    File fileOut = new File("./output/x.wav");
 
-        // create clip reference 
+    // constructor to initialize streams and clip
+    public AudioPlayer(String f_path, Boolean recording_status) throws UnsupportedAudioFileException, IOException, LineUnavailableException { 
+        file_path = f_path;
+        recording = recording_status;
+        
+        // create AudioInputStream object
+        audioInputStream = AudioSystem.getAudioInputStream(new File(file_path).getAbsoluteFile()); 
+        
+        // create clip reference
         clip = AudioSystem.getClip();
         
         // open audioInputStream to the clip
@@ -155,24 +171,30 @@ class AudioPlayer extends Thread {
     }
 
     // Method to play the audio 
-    public void play() {
+    public void play() throws IOException {
         //start the clip 
         clip.start();
         status = true;
+        if (recording) {
+            AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, fileOut);
+        }
     }
 
     // Method to stop the audio
     public void stopAudio() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
         clip.stop();
-        clip.close(); 
+        clip.close();
     }
 
     public void run() {
         try {
+            // play the sound
             play();
-            // The below line of code is to check whether the sound is playing or not
-            // System.out.println("Playing");
             while(status){
+                // sleep for 5 seconds in order for the audio to be completely played
+                // because the audio will play only as long as the thread is alive and 
+                // the thread will be alive only as long asw the obljects are created and destroyed
+                // which is veyr much less than 5 seconds
                 Thread.sleep(5_000);
                 status = false;
             }
