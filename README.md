@@ -7,6 +7,6 @@ If the window size goes below a specified limit, the buttons can be access by us
 
 The audio is played using the AudioInputStream class. It matches the action event when a button is pressed and plays the respective sound file.
 
-
+![Screenshot of beat-maker-app](https://im-vijayts.github.com/img/beat-maker-app.png)
 
 All the sounds present in this repository are from random sources and is only for educative and non-commercial purposes.
