@@ -1,4 +1,4 @@
-# Beat maker app
+# Sound Board App
 
 A cross-platform beat maker app implemented using java swing API.
 
